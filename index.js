@@ -6,11 +6,11 @@ const typeDefs = gql`
         description: String
         thumbnailUrl(width: Int, height: Int): String
     }
-
+# adding @deprecated directive will give a warning in the playground
     type Product {
         name: String
         description: String
-        imageUrl: String
+        imageUrl: String @deprecated(reason: "use image instead")
         image: Image
     }
 
@@ -22,7 +22,10 @@ const typeDefs = gql`
 /* Apollo server allows us to customize the mocks for a given query */
 
 const mocks = {
-    String: () => 'my custom string'
+    String: () => 'my custom string',
+    Product: () => ({
+        imageUrl: () => null
+    })
 }
 
 /* We can mock resolvers if we'd like. */

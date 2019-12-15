@@ -1,9 +1,17 @@
 const { ApolloServer, gql } = require('apollo-server');
 
 const typeDefs = gql`
+    type Image {
+        url: String
+        description: String
+        thumbnailUrl(width: Int, height: Int): String
+    }
+
     type Product {
         name: String
         description: String
+        imageUrl: String
+        image: Image
     }
 
     type Query {
@@ -14,7 +22,7 @@ const typeDefs = gql`
 /* Apollo server allows us to customize the mocks for a given query */
 
 const mocks = {
-    String: () => 'product something or other'
+    String: () => 'my custom string'
 }
 
 /* We can mock resolvers if we'd like. */

@@ -6,55 +6,35 @@ const typeDefs = gql`
         description: String
         thumbnailUrl(width: Int, height: Int): String
     }
-    # adding an enum for more configurable fields. We will then add an optional argument to the
-    # description field on Product that takes one of the enums
-    enum ProductDescriptionFormat {
-        TEXT
-        HTML
+    type PageInfo {
+        hasNextPage: Boolean!
+        hasPreviousPage: Boolean!
+        startCursor: ID!
+        endCursor: ID!
     }
-    # We can do a similar thing to specify language
-    enum Locales {
-        ENGLISH
-        FRENCH
-        SPANISH
-        GERMAN
+    type RecommendedProductEdge {
+        node: Product!
+        cursor: ID!
     }
-    # adding @deprecated directive will give a warning in the playground
+    type RecommendedProductConnection {
+        edges: [RecommendedProductEdge]
+        pageInfo: PageInfo!
+    }
     type Product {
+        id: ID!
         name: String
-        # by adding "... = TEXT" we provide a default value.
-        description(format: ProductDescriptionFormat = TEXT, locale: Locales = EN): String
-        imageUrl: String @deprecated(reason: "use image instead")
+        description: String
         image: Image
+        recommendedProducts(first: Int, after: ID, last: Int, before: ID): RecommendedProductConnection!
     }
-
     type Query {
         product(id: ID!): Product
     }
 `;
 
-/* Apollo server allows us to customize the mocks for a given query */
-
-const mocks = {
-    String: () => 'my custom string',
-    Product: () => ({
-        imageUrl: () => null
-    })
-};
-
-/* We can mock resolvers if we'd like. */
-
-// const resolvers = {
-//     Query: {
-//         helloTwo: () => {
-//             return 'helloTwo\'s string response'
-//         }
-//     }
-// }
-
 const server = new ApolloServer({
     typeDefs,
-    mocks,
+    mocks: true,
     mockEntireSchema: false
 });
 

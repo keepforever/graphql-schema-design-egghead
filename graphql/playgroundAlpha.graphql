@@ -1,0 +1,21 @@
+# Write your query or mutation here
+query myHello {
+    hello
+}
+
+query myHelloTwoQuery {
+    helloTwo
+}
+
+query bothMyHellos {
+    hello
+    helloTwo
+}
+
+query myFoo {
+    myFoo {
+        fiz {
+            alpha
+        }
+    }
+}

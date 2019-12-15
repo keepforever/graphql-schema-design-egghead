@@ -6,10 +6,24 @@ const typeDefs = gql`
         description: String
         thumbnailUrl(width: Int, height: Int): String
     }
-# adding @deprecated directive will give a warning in the playground
+    # adding an enum for more configurable fields. We will then add an optional argument to the
+    # description field on Product that takes one of the enums
+    enum ProductDescriptionFormat {
+        TEXT
+        HTML
+    }
+    # We can do a similar thing to specify language
+    enum Locales {
+        ENGLISH
+        FRENCH
+        SPANISH
+        GERMAN
+    }
+    # adding @deprecated directive will give a warning in the playground
     type Product {
         name: String
-        description: String
+        # by adding "... = TEXT" we provide a default value.
+        description(format: ProductDescriptionFormat = TEXT, locale: Locales = EN): String
         imageUrl: String @deprecated(reason: "use image instead")
         image: Image
     }
@@ -26,7 +40,7 @@ const mocks = {
     Product: () => ({
         imageUrl: () => null
     })
-}
+};
 
 /* We can mock resolvers if we'd like. */
 
@@ -41,8 +55,7 @@ const mocks = {
 const server = new ApolloServer({
     typeDefs,
     mocks,
-    mockEntireSchema: false 
-
+    mockEntireSchema: false
 });
 
 server.listen(4001).then(({ url }) => {

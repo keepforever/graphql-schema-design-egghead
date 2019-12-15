@@ -19,3 +19,19 @@ query myFoo {
         }
     }
 }
+
+# we can alias our query if we need to get description in both HTML and TEXT format. 
+
+query myProductQuery {
+  product(id: "xyz"){
+    name
+    description
+    htmlDescription: description(format: HTML, locale: EN)
+    imageUrl
+    image {
+      description
+      url
+      thumbnailUrl(width:500, height:500)
+    }
+  }
+}

@@ -6,26 +6,48 @@ const typeDefs = gql`
         description: String
         thumbnailUrl(width: Int, height: Int): String
     }
+    type PaginationEntry {
+        cursor: ID!
+    }
     type PageInfo {
         hasNextPage: Boolean!
         hasPreviousPage: Boolean!
         startCursor: ID!
         endCursor: ID!
     }
+    type RecommendedProductConnectionPageInfo {
+        hasNextPage: Boolean!
+        hasPreviousPage: Boolean!
+        hasNextPages(amount: Int!): [PaginationEntry!]!
+        hasPreviousPages(amount: Int!): [PaginationEntry!]!
+        startCursor: ID!
+        endCursor: ID!
+    }
     type RecommendedProductEdge {
         node: Product!
         cursor: ID!
+        boughtTogetherPercentage: Int
     }
     type RecommendedProductConnection {
         edges: [RecommendedProductEdge]
-        pageInfo: PageInfo!
+        pageInfo: RecommendedProductConnectionPageInfo!
+    }
+    enum RecommendedProductConnectionOrder {
+        CREATED_AT
+        NAME
     }
     type Product {
         id: ID!
         name: String
         description: String
         image: Image
-        recommendedProducts(first: Int, after: ID, last: Int, before: ID): RecommendedProductConnection!
+        recommendedProducts(
+            first: Int
+            after: ID
+            last: Int
+            before: ID
+            orderBy: RecommendedProductConnectionOrder
+        ): RecommendedProductConnection!
     }
     type Query {
         product(id: ID!): Product

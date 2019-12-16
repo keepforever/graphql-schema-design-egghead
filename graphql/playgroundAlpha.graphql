@@ -1,109 +1,24 @@
-# Write your query or mutation here
-query myHello {
-    hello
-}
-
-query myHelloTwoQuery {
-    helloTwo
-}
-
-query bothMyHellos {
-    hello
-    helloTwo
-}
-
-query myFoo {
-    myFoo {
-        fiz {
-            alpha
-        }
-    }
-}
-
-# we can alias our query if we need to get description in both HTML and TEXT format.
-
-query myProductQuery {
-    product(id: "xyz") {
-        name
-        description
-        htmlDescription: description(format: HTML, locale: EN)
-        imageUrl
-        image {
-            description
-            url
-            thumbnailUrl(width: 500, height: 500)
-        }
-    }
-}
-
-# Using the Relay Curor Pagination Spec
-
-query AccuratePaginationQuery {
+query MyWorkingQuery {
     product(id: "abc") {
-        name
-        description
-        image {
-            url
-            description
-        }
         recommendedProducts(first: 10) {
             edges {
                 node {
                     name
-                    description
-                    image {
-                        url
-                        description
-                    }
-                }
-            }
-            pageInfo {
-                hasNextPage
-                hasPreviousPage
-                startCursor
-                endCursor
-            }
-        }
-    }
-}
-
-# my jank query.  Broken, doesn't match typeDef
-query myProductQuery {
-    product(id: "xyz") {
-        name
-        description
-        htmlDescription: description(format: HTML, locale: ENGLISH)
-        imageUrl
-        image {
-            description
-            url
-            thumbnailUrl(width: 500, height: 500)
-        }
-        # returns the first: Int after: ID the cursor (typically id of object).
-        # first:after :: last:before
-        # when we invoke this we get back edges (comprised of nodes), and pageInfo.
-        nextPage: recommendedProducts(first: 3, after: "uuid") {
-            edges {
-                nodes {
-                    name
                     image {
                         url
                     }
                 }
+                boughtTogetherPercentage
             }
             pageInfo {
-                hasNextPage
-                hasPreviousPage
+                hasNextPages(amount: 3) {
+                    cursor
+                }
+                hasPreviousPages(amount: 3) {
+                    cursor
+                }
                 startCursor
                 endCursor
-            }
-        }
-        previousPage: recommendedProducts(last: 3, before: "uuid") {
-            edges {
-                nodes {
-                    name
-                    image
-                }
             }
         }
     }

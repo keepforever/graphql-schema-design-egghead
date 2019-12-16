@@ -6,15 +6,18 @@ const typeDefs = gql`
         description: String
         thumbnailUrl(width: Int, height: Int): String
     }
+
     type PaginationEntry {
         cursor: ID!
     }
+
     type PageInfo {
         hasNextPage: Boolean!
         hasPreviousPage: Boolean!
         startCursor: ID!
         endCursor: ID!
     }
+
     type RecommendedProductConnectionPageInfo {
         hasNextPage: Boolean!
         hasPreviousPage: Boolean!
@@ -23,19 +26,23 @@ const typeDefs = gql`
         startCursor: ID!
         endCursor: ID!
     }
+
     type RecommendedProductEdge {
         node: Product!
         cursor: ID!
         boughtTogetherPercentage: Int
     }
+
     type RecommendedProductConnection {
         edges: [RecommendedProductEdge]
         pageInfo: RecommendedProductConnectionPageInfo!
     }
+
     enum RecommendedProductConnectionOrder {
         CREATED_AT
         NAME
     }
+
     type Product {
         id: ID!
         name: String
@@ -49,8 +56,23 @@ const typeDefs = gql`
             orderBy: RecommendedProductConnectionOrder
         ): RecommendedProductConnection!
     }
+
     type Query {
         product(id: ID!): Product
+        productBySlug(slug: String!): Product
+    }
+
+    input CreateProductInput {
+        name: String!
+        description: String
+    }
+
+    type CreateProductPayload {
+        product: Product!
+    }
+
+    type Mutation {
+        createProduct(input: CreateProductInput!): CreateProductPayload!
     }
 `;
 

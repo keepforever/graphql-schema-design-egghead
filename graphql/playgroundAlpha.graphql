@@ -23,3 +23,25 @@ query MyWorkingQuery {
         }
     }
 }
+
+# If you add a variable to the playground
+
+mutation CreateProductMutation($input: CreateProductInput!) {
+  createProduct(input: $input) {
+    product {
+      id
+      name
+    }
+  }
+}
+
+# to skip adding a variable to playground.
+
+mutation CreateProductMutation {
+  createProduct(input: {name: "WubbaFlub", description: "Does things..."}) {
+    product {
+      id
+      name
+    }
+  }
+}

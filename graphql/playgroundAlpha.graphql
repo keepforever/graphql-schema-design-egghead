@@ -1,21 +1,47 @@
-# Write your query or mutation here
-query myHello {
-    hello
-}
-
-query myHelloTwoQuery {
-    helloTwo
-}
-
-query bothMyHellos {
-    hello
-    helloTwo
-}
-
-query myFoo {
-    myFoo {
-        fiz {
-            alpha
+query MyWorkingQuery {
+    product(id: "abc") {
+        recommendedProducts(first: 10) {
+            edges {
+                node {
+                    name
+                    image {
+                        url
+                    }
+                }
+                boughtTogetherPercentage
+            }
+            pageInfo {
+                hasNextPages(amount: 3) {
+                    cursor
+                }
+                hasPreviousPages(amount: 3) {
+                    cursor
+                }
+                startCursor
+                endCursor
+            }
         }
     }
+}
+
+# If you add a variable to the playground
+
+mutation CreateProductMutation($input: CreateProductInput!) {
+  createProduct(input: $input) {
+    product {
+      id
+      name
+    }
+  }
+}
+
+# to skip adding a variable to playground.
+
+mutation CreateProductMutation {
+  createProduct(input: {name: "WubbaFlub", description: "Does things..."}) {
+    product {
+      id
+      name
+    }
+  }
 }

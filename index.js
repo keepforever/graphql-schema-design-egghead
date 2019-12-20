@@ -1,48 +1,85 @@
 const { ApolloServer, gql } = require('apollo-server');
 
 const typeDefs = gql`
-    type Fiz {
-        alpha: String
+    type Image {
+        url: String
+        description: String
+        thumbnailUrl(width: Int, height: Int): String
     }
 
-    type Foo {
-        bar: String,
-        fiz: [Fiz]
+    type PaginationEntry {
+        cursor: ID!
+    }
+
+    type PageInfo {
+        hasNextPage: Boolean!
+        hasPreviousPage: Boolean!
+        startCursor: ID!
+        endCursor: ID!
+    }
+
+    type RecommendedProductConnectionPageInfo {
+        hasNextPage: Boolean!
+        hasPreviousPage: Boolean!
+        hasNextPages(amount: Int!): [PaginationEntry!]!
+        hasPreviousPages(amount: Int!): [PaginationEntry!]!
+        startCursor: ID!
+        endCursor: ID!
+    }
+
+    type RecommendedProductEdge {
+        node: Product!
+        cursor: ID!
+        boughtTogetherPercentage: Int
+    }
+
+    type RecommendedProductConnection {
+        edges: [RecommendedProductEdge]
+        pageInfo: RecommendedProductConnectionPageInfo!
+    }
+
+    enum RecommendedProductConnectionOrder {
+        CREATED_AT
+        NAME
+    }
+
+    type Product {
+        id: ID!
+        name: String
+        description: String
+        image: Image
+        recommendedProducts(
+            first: Int
+            after: ID
+            last: Int
+            before: ID
+            orderBy: RecommendedProductConnectionOrder
+        ): RecommendedProductConnection!
     }
 
     type Query {
-        hello: String,
-        helloTwo: String,
-        myFoo: Foo
+        product(id: ID!): Product
+        productBySlug(slug: String!): Product
+    }
+
+    input CreateProductInput {
+        name: String!
+        description: String
+    }
+
+    type CreateProductPayload {
+        product: Product!
+    }
+
+    type Mutation {
+        createProduct(input: CreateProductInput!): CreateProductPayload!
     }
 `;
 
-/* Apollo server allows us to customize the mocks for a given query */
-
-const mocks = {
-    String: () => 'my custom string value' /* since the scalar type String starts with uppercase "S",
-    the entry in the mocks object must also */
-}
-
-/* We can mock resolvers if we'd like. */
-
-const resolvers = {
-    Query: {
-        helloTwo: () => {
-            return 'helloTwo\'s string response'
-        }
-    }
-}
-
 const server = new ApolloServer({
     typeDefs,
-    /* Activate mock mode. Allows us to not need to write resolvers. Apollo will
-    automatically return objects based on the return type provided in typeDefs */
-    // mocks: true // use this when you don't want to provide any custom mocks.
-    mocks, // mocks resolvers per your mocks option config.
-    resolvers,
-    mockEntireSchema: false // must use this if providing custom resolvers.
-
+    mocks: true,
+    mockEntireSchema: false
 });
 
 server.listen(4001).then(({ url }) => {
